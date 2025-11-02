@@ -1,22 +1,35 @@
-# 前言
-基于MLIR tutorials。具体来说，可以通过`llvm-project/mlir/docs/Tutorials/Toy/` 和 `llvm-project/mlir/example/toy/`分别找到文档和源文件
-本项目的`etoy`方言，基于`toy dialect`暴改而来，因为`toy dialect`本身和语言BNF设计之下（以及本身的教学目的），整个语言至少有以下不足:
-- 1. 只有PrintOp, 没有ScanOp，所以实际上整个程序都是编译期能决定的
-- 2. 不强制（以及部分地方不支持）类型声明
-- 3. 没控制流，所以也没递归
-- 4. 所有非Builtin的Function全都强制内联
-- 5. ShapeInfer在目标制品等于或者低级于Affine Dailect时才会启用，也就是toy dialect上类型信息可能不完整
-- 6. 只有JIT，但是也没有REPL（源于对ReturnOp的粗暴处理）
-- 7. 同上，强制main函数Return Void，导致返回的错误码基本都是随机的
-- 8. 运算符太少，而且都是element-wise
-# env
-在编译之前，需要安装LLVM和MLIR的支持
+## Preface
+
+Based on the MLIR tutorials. Specifically, you can find the documentation and source files in llvm-project/mlir/docs/Tutorials/Toy/ and llvm-project/mlir/example/toy/, respectively.
+
+This project’s etoy dialect is heavily modified from the toy dialect, which, due to its BNF design (and its educational purpose), has several limitations, including:
+
+- Only PrintOp, no ScanOp, meaning the entire program is determinable at compile time.
+
+- No enforced (and in some cases unsupported) type declarations.
+
+- No control flow — thus, no recursion.
+
+- All non-builtin functions are forcibly inlined.
+
+- Shape inference is only enabled when the target artifact is equal to or lower than the Affine Dialect, meaning that type information in the toy dialect may be incomplete.
+
+- Only JIT compilation is supported, and there’s no REPL (due to the crude handling of ReturnOp).
+
+- For the same reason, the main function is forced to return void, so error codes are effectively random.
+
+- The available operators are very limited, and all are element-wise.
+
+## Environment
+
+Before building, you need to install LLVM and MLIR support:
+
 ```bash
 git submodule update --init --recursive --progress
 cd ./third_party/llvm-project/
 mkdir build
 cd build
-# you may change the install path you self
+# you may change the install path yourself
 cmake -G Ninja ../llvm \
   -DCMAKE_BUILD_TYPE=Release \
   -DLLVM_ENABLE_PROJECTS="mlir;clang" \
@@ -24,7 +37,11 @@ cmake -G Ninja ../llvm \
 ninja
 ninja install
 ```
-此时的相关的头文件库文件被安装在 prefix 指定的路径下
-# cmake
-- 关闭标准 RTTI：llvm-project 本身禁用了 std RTTI，并提供一套轻量级的 LLVM style RTTI。由于链接器禁止链接 no RTTI 和 RTTI 文件，所以建议将本项目的 RTTI 关闭以配合 LLVM 库文件。在定义类时，也需要 提供 LLVM style 的 RTTI 接口
-- 找到 LLVM 和 MLIR 的库文件，在上面定义的路径下，如果需要找某个符号，可以使用那个shell script，不过可能需要修改其中的查找路径
+
+At this point, the relevant header and library files will be installed in the path specified by the prefix.
+
+## CMake
+
+Disable standard RTTI: The llvm-project itself disables standard C++ RTTI and provides a lightweight LLVM-style RTTI.
+Since the linker disallows mixing RTTI-enabled and RTTI-disabled files, it is recommended to disable RTTI in this project as well to ensure compatibility with LLVM libraries.
+When defining classes, you also need to provide LLVM

@@ -11,7 +11,6 @@
 
 #include "etoy/Dialect.hpp"
 #include "generated/Dialect.cpp.inc"
-#include "mlir/IR/BuiltinTypeInterfaces.h"
 #include "mlir/IR/Region.h"
 #include "mlir/IR/ValueRange.h"
 #include "llvm/ADT/STLExtras.h"
