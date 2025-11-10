@@ -201,6 +201,12 @@ llvm::LogicalResult ConstantOp::verify() {
     return mlir::success();
 }
 
+// ZerosOp
+void ZerosOp::build(mlir::OpBuilder& builder, mlir::OperationState& state) {
+    state.addTypes(UnrankedTensorType::get(builder.getF64Type()));
+    state.addOperands({});
+}
+
 // AddOp
 void AddOp::build(mlir::OpBuilder& builder, mlir::OperationState& state,
                   mlir::Value lhs, mlir::Value rhs) {

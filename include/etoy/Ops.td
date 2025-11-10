@@ -59,6 +59,15 @@ def ConstantOp : EToy_Op<"constant", [Pure]> {
     let hasVerifier = 1;
 }
 
+def ZerosOp : EToy_Op<"zeros", [Pure]> {
+    let summary = "zeros";
+    let results = (outs
+        StaticShapeTensorOf<[F64]>
+    );
+    let builders = [
+        OpBuilder<(ins)>
+    ];
+}
 // AddOp
 def AddOp : EToy_Op<"add", [Pure, DeclareOpInterfaceMethods<ShapeInferenceOpInterface>]> {
     let summary = "element-wise add";

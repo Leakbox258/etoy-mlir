@@ -18,9 +18,6 @@
 
 // #include "parser/Lexer.h"
 #include "Lexer.h"
-#include "llvm/Support/raw_ostream.h"
-
-#include <algorithm>
 #include <cassert>
 #include <cstdint>
 #include <llvm/ADT/ArrayRef.h>

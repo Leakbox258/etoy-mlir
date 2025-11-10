@@ -10,6 +10,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "mlir/Dialect/LLVMIR/LLVMTypes.h"
+#include "mlir/IR/BuiltinAttributes.h"
 #include "llvm/ADT/StringRef.h"
 #include <cassert>
 #include <etoy/Dialect.hpp>
@@ -240,6 +241,24 @@ struct ConstantOpLowering : public OpRewritePattern<etoy::ConstantOp> {
         // Replace this operation with the generated alloc.
         rewriter.replaceOp(op, alloc);
         return success();
+    }
+};
+
+//===----------------------------------------------------------------------===//
+// ToyToAffine RewritePatterns: Zeros operations
+//===----------------------------------------------------------------------===//
+
+struct ZerosOpLowering : public OpRewritePattern<etoy::ZerosOp> {
+    using OpRewritePattern<etoy::ZerosOp>::OpRewritePattern;
+
+    LogicalResult matchAndRewrite(etoy::ZerosOp op,
+                                  PatternRewriter& rewriter) const final {
+        auto tensorType = llvm::cast<RankedTensorType>(op.getType());
+
+        auto memRefType = convertTensorToMemRef(tensorType);
+        auto _ = insertAllocAndDealloc(memRefType, op->getLoc(), rewriter);
+
+        return llvm::success();
     }
 };
 
